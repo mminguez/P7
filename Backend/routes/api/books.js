@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const Book = require('../../models/Book')
+const authMiddleware = require('../../middleware/auth')
 
 const router = Router()
 
@@ -36,7 +37,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
     const newBook = Book(req.body)
     try {
         const Book = await newBook.save()
@@ -47,7 +48,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.post('/:id/rating', async (req, res) => {
+router.post('/:id/rating', authMiddleware, async (req, res) => {
     const { id } = req.params;
     const { ratings } = req.body;
 
@@ -68,7 +69,7 @@ router.post('/:id/rating', async (req, res) => {
     }
 })
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
     const { id } = req.params
 
     try {
@@ -81,7 +82,7 @@ router.put('/:id', async (req, res) => {
     }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
     const { id } = req.params
     try {
         const removed = await Book.findByIdAndDelete(id)

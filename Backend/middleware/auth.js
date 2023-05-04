@@ -1,17 +1,18 @@
-// exemple file
+require('dotenv').config();
+const jwtSecret = process.env.JWT_SECRET;
+const { verify: jwtVerify } = require("jsonwebtoken");
 
-const jwt = require('jsonwebtoken');
- 
 module.exports = (req, res, next) => {
-   try {
-       const token = req.headers.authorization.split(' ')[1];
-       const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-       const userId = decodedToken.userId;
-       req.auth = {
-           userId: userId
-       };
-	next();
-   } catch(error) {
-       res.status(401).json({ error });
-   }
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  const token = authHeader.slice(7);
+  try {
+    const payload = jwtVerify(token, jwtSecret);
+    req.user = payload;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
 };

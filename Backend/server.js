@@ -1,42 +1,30 @@
+require('dotenv').config();
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
-const { mongoUri } = require('./config')
 const cors = require('cors')
-const bodyParser = require('body-parser')
-const loginRoutes = require('./routes/api/login')
-const exempleRoutes = require('./routes/api/exemple')
-var { expressjwt: jwt } = require("express-jwt");
-var jwks = require('jwks-rsa');
+const bookRoutes = require('./routes/api/books')
+const loginRoutes = require('./routes/api/logins')
+const signupRoutes = require('./routes/api/signups')
 
-var jwtCheck = jwt({
-    secret: jwks.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: 'https://'
-  }),
-  audience: 'https://',
-  issuer: 'https://',
-  algorithms: ['RS256']
-});
-
-app.use(jwtCheck);
 app.use(cors({
-    origin: 'https://'
+    origin: ['http://localhost:3000', 'https://example.com'],
+    credentials: true,
 }))
-app.use(bodyParser.json())
-  
-mongoose
-    .connect(mongoUri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => console.log('MongoDB database Connected...'))
-    .catch((err) => console.log(err))
 
-app.use('/api/login', loginRoutes)
-app.use('/api/exemple', exempleRoutes)
+mongoose.set('debug', true);
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB database Connected...'))
+.catch((err) => console.log(err))
+
+app.use(express.json())
+app.use('/api/books', bookRoutes)
+app.use('/api/auth/login', loginRoutes)
+app.use('/api/auth/signup', signupRoutes)
 app.get('/', (req, res) => res.send('Seems to work... :)'))
 
-app.listen(4000, () => console.log(`App en cours : http://localhost:${4000}`))
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`))
