@@ -1,7 +1,8 @@
 const Book = require('../models/Book')
 const path = require('path');
 const sharp = require('sharp');
-
+const fs = require('fs');
+const url = require('url');
 
 exports.getBooks = async (req, res) => {
     try {
@@ -46,7 +47,7 @@ exports.createBook = async (req, res) => {
         const outputPath = path.join(__dirname, '..', 'uploads', filename);
 
         await sharp(imageFile.buffer)
-            .resize(640, 640)
+            .resize(450, 450)
             .toFormat('jpeg')
             .jpeg({ quality: 90 })
             .toFile(outputPath);
@@ -91,23 +92,54 @@ exports.addRatingToBook = async (req, res) => {
 };
 
 
-
 exports.updateBook = async (req, res) => {
-    const { id } = req.params
+    const { id } = req.params;
 
-    try {
-        const response = await Book.findByIdAndUpdate(id, req.body)
-        if (!response) throw new Error('Something went wrong')
-        const updated = { ...response._doc, ...req.body }
-        res.status(200).json(updated)
-    } catch (error) {
-        res.status(500).json({ message: error.message })
+    const bookData = req.body;
+
+    if (req.files && req.files.image && req.files.image.length > 0) {
+        const book = await Book.findById(id);
+        if (book.imageUrl) {
+            const imagePath = path.join(__dirname, '..', 'uploads', path.basename(url.parse(book.imageUrl).pathname));
+            fs.unlink(imagePath, (err) => {
+                if (err) console.error(`Failed to delete image: ${err}`);
+            });
+        }
+        const imageFile = req.files.image[0];
+        const filename = `book-${Date.now()}.jpeg`;
+        const outputPath = path.join(__dirname, '..', 'uploads', filename);
+
+        await sharp(imageFile.buffer)
+            .resize(450, 450)
+            .toFormat('jpeg')
+            .jpeg({ quality: 90 })
+            .toFile(outputPath);
+
+        bookData.imageUrl = `http://localhost:4000/uploads/${filename}`;
     }
-}
+    const updatedBookData = JSON.parse(req.body.book);
+    Object.assign(bookData, updatedBookData);
+    try {
+        const response = await Book.findByIdAndUpdate(id, bookData, { new: true }); // Add { new: true } to return the updated document
+        if (!response) throw new Error('Something went wrong');
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 
 exports.deleteBook = async (req, res) => {
     const { id } = req.params
     try {
+        const book = await Book.findById(id);
+        if (book.imageUrl) {
+            const imagePath = path.join(__dirname, '..', 'uploads', path.basename(url.parse(book.imageUrl).pathname));
+            fs.unlink(imagePath, (err) => {
+                if (err) console.error(`Failed to delete image: ${err}`);
+            });
+        }
         const removed = await Book.findByIdAndDelete(id)
         if (!removed) throw new Error('Something went wrong')
         res.status(200).json(removed)

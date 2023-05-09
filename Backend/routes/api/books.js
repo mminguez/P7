@@ -19,7 +19,7 @@ router.get('/bestrating', getBestRatingBooks);
 router.get('/:id', getBookById);
 router.post('/', authMiddleware, uploadBookDataAndImage, createBook);
 router.post('/:id/rating', authMiddleware, addRatingToBook);
-router.put('/:id', authMiddleware, updateBook);
+router.put('/:id', authMiddleware, uploadBookDataAndImage, updateBook);
 router.delete('/:id', authMiddleware, deleteBook);
 
 module.exports = router;
