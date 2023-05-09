@@ -43,13 +43,13 @@ exports.createBook = async (req, res) => {
     if (req.files && req.files.image && req.files.image.length > 0) {
         const imageFile = req.files.image[0];
 
-        const filename = `book-${Date.now()}.jpeg`;
+        const filename = `book-${Date.now()}.webp`;
         const outputPath = path.join(__dirname, '..', 'uploads', filename);
 
         await sharp(imageFile.buffer)
             .resize(450, 450)
-            .toFormat('jpeg')
-            .jpeg({ quality: 90 })
+            .toFormat('webp')
+            .webp({ quality: 70 })
             .toFile(outputPath);
 
         bookData.imageUrl = `http://localhost:4000/uploads/${filename}`;
@@ -106,13 +106,13 @@ exports.updateBook = async (req, res) => {
             });
         }
         const imageFile = req.files.image[0];
-        const filename = `book-${Date.now()}.jpeg`;
+        const filename = `book-${Date.now()}.webp`;
         const outputPath = path.join(__dirname, '..', 'uploads', filename);
 
         await sharp(imageFile.buffer)
             .resize(450, 450)
-            .toFormat('jpeg')
-            .jpeg({ quality: 90 })
+            .toFormat('webp')
+            .webp({ quality: 70 })
             .toFile(outputPath);
 
         bookData.imageUrl = `http://localhost:4000/uploads/${filename}`;
