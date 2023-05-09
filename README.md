@@ -25,7 +25,16 @@ npm i
 npm run start
 ```
 
-- Keep the previous terminal opened and open another terminal:
+- Make sure to have created a MongoDB collection (https://www.mongodb.com/fr-fr/basics/create-database)
+- Please get your MongoDB connection URI (https://www.mongodb.com/docs/manual/reference/connection-string/)
+- Keep the previous terminal opened and open another terminal
+- Export env variables like:
+```
+export JWT_SECRET="$Gm69MI2eUuPC41cW/Nv6UV4Iq52Cx5AqE6lHDeNqkw4="
+export MONGO_URI="mongodb+srv://me:10101010@mydatabase.exemple.mongodb.net" // Your MongoDB URI (https://www.mongodb.com/docs/manual/reference/connection-string/)
+```
+
+- Then type:
 
 ```
 cd P7/Backend/
@@ -65,8 +74,16 @@ cd P7/P7-Dev-Web-livres/
 npm i
 npm run start
 ```
+- Assurez vous d'avoir créé une base de donnée sur MongoDB (https://www.mongodb.com/fr-fr/basics/create-database)
+- Munissez vous de votre URL de connexion à MongoDB (https://www.mongodb.com/docs/manual/reference/connection-string/)
+- Gardez le terminal précédent ouvert et ouvrez un autre terminal:
+- Exportez les variables dans l'environnement
+```
+export JWT_SECRET="$Gm69MI2eUuPC41cW/Nv6UV4Iq52Cx5AqE6lHDeNqkw4="
+export MONGO_URI="mongodb+srv://me:10101010@mydatabase.exemple.mongodb.net" // Votre url MongoDB 
+```
 
-Gardez le terminal précédent ouvert et ouvrez un autre terminal:
+- Puis tapez :
 
 ```
 cd P7/Backend/
