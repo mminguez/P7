@@ -6,9 +6,10 @@ const cors = require('cors')
 const bookRoutes = require('./routes/api/books')
 const loginRoutes = require('./routes/api/logins')
 const signupRoutes = require('./routes/api/signups')
+const path = require('path');
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://example.com'],
+    origin: ['http://localhost:3000'],
     credentials: true,
 }))
 
@@ -19,6 +20,8 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 .then(() => console.log('MongoDB database Connected...'))
 .catch((err) => console.log(err))
+
+app.use('/uploads', express.static(path.resolve('uploads')));
 
 app.use(express.json())
 app.use('/api/books', bookRoutes)
