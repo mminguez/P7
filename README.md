@@ -12,6 +12,11 @@ To run the project make sure to have npm and Node.js.
 To run the project follow these steps:
 
 - Clone the repository P7 and its submodule P7-Dev-Web-livres
+
+```
+git clone --recurse-submodules https://github.com/mminguez/P7.git 
+```
+
 - Type those commands in bash CLI
 
 ```
@@ -48,6 +53,11 @@ Pour exécuter le projet, assurez-vous d'avoir npm et Node.js.
 Pour exécuter le projet, suivez ces étapes:
 
 - Clonez le dépôt P7 et son sous-module P7-Dev-Web-livres
+
+```
+git clone --recurse-submodules https://github.com/mminguez/P7.git 
+```
+
 - Tapez ces commandes dans la CLI bash
 
 ```
