@@ -74,6 +74,10 @@ exports.addRatingToBook = async (req, res) => {
         if (!book) {
             return res.status(404).json({ msg: 'Book not found' });
         }
+        const existingRatingIndex = book.ratings.findIndex(r => r.userId === ratingData.userId);
+
+        
+
         const allRatings = book.ratings || [];
         console.log(ratingData.rating);
         console.log(allRatings.length);
@@ -81,7 +85,11 @@ exports.addRatingToBook = async (req, res) => {
         const totalRatings = allRatings.length + 1;
         const avgRating = totalRatings === 0 ? 0 : (allRatings.reduce((sum, r) => sum + r.grade, 0) + ratingData.grade) / totalRatings;
         console.log(avgRating);
-        book.ratings.push(ratingData);
+        if (existingRatingIndex !== -1) {
+            book.ratings[existingRatingIndex] = ratingData;
+        } else {
+            book.ratings.push(ratingData);
+        }
         book.averageRating = avgRating;
 
         await book.save();
