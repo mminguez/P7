@@ -5,7 +5,7 @@ const { verify: jwtVerify } = require("jsonwebtoken");
 module.exports = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Unauthorized" });
+    return res.status(403).json({ error: "unauthorized request" });
   }
   const token = authHeader.slice(7);
   try {
@@ -13,6 +13,6 @@ module.exports = (req, res, next) => {
     req.user = payload;
     next();
   } catch (err) {
-    return res.status(401).json({ error: "Unauthorized" });
+    return res.status(403).json({ error: "unauthorized request" });
   }
 };

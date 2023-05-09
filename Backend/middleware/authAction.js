@@ -16,7 +16,7 @@ const isUserAuthorized = async (req, res, next) => {
         console.log('book Id:', book.id);
 
         if (userId !== bookUserId) {
-            return res.status(403).json({ message: 'You are not authorized to perform this action' });
+            return res.status(403).json({ message: 'unauthorized request' });
         }
 
         next();
