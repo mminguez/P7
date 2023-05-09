@@ -120,7 +120,7 @@ exports.updateBook = async (req, res) => {
     const updatedBookData = JSON.parse(req.body.book);
     Object.assign(bookData, updatedBookData);
     try {
-        const response = await Book.findByIdAndUpdate(id, bookData, { new: true }); // Add { new: true } to return the updated document
+        const response = await Book.findByIdAndUpdate(id, bookData, { new: true });
         if (!response) throw new Error('Something went wrong');
         res.status(200).json(response);
     } catch (error) {
