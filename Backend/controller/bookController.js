@@ -40,6 +40,10 @@ exports.getBookById = async (req, res) => {
 exports.createBook = async (req, res) => {
     const bookData = JSON.parse(req.body.book);
 
+    if (isNaN(bookData.year)){
+        return res.status(400).json({ msg: 'Year should be a number' });
+    }
+
     if (req.files && req.files.image && req.files.image.length > 0) {
         const imageFile = req.files.image[0];
 
@@ -76,12 +80,15 @@ exports.addRatingToBook = async (req, res) => {
         }
         const existingRatingIndex = book.ratings.findIndex(r => r.userId === ratingData.userId);
 
-        
+
 
         const allRatings = book.ratings || [];
         console.log(ratingData.rating);
         console.log(allRatings.length);
         ratingData.grade = parseInt(ratingData.rating);
+        if (ratingData.rating < 1 || ratingData.rating > 5) {
+            return res.status(403).json({ message: 'unauthorized request' });
+        }
         const totalRatings = allRatings.length + 1;
         const avgRating = totalRatings === 0 ? 0 : (allRatings.reduce((sum, r) => sum + r.grade, 0) + ratingData.grade) / totalRatings;
         console.log(avgRating);
@@ -102,8 +109,21 @@ exports.addRatingToBook = async (req, res) => {
 
 exports.updateBook = async (req, res) => {
     const { id } = req.params;
-
     const bookData = req.body;
+
+    if (req.body.book) {
+        const updatedBookData = JSON.parse(req.body.book);
+        if (isNaN(updatedBookData.year)) {
+            return res.status(400).json({ msg: 'Year should be a number' });
+        }
+        Object.assign(bookData, updatedBookData);
+    } else {
+        if (isNaN(bookData.year)) {
+            return res.status(400).json({ msg: 'Year should be a number' });
+        }
+    }
+    
+    
 
     if (req.files && req.files.image && req.files.image.length > 0) {
         const book = await Book.findById(id);
@@ -125,8 +145,7 @@ exports.updateBook = async (req, res) => {
 
         bookData.imageUrl = `http://localhost:4000/uploads/${filename}`;
     }
-    const updatedBookData = JSON.parse(req.body.book);
-    Object.assign(bookData, updatedBookData);
+    
     try {
         const response = await Book.findByIdAndUpdate(id, bookData, { new: true });
         if (!response) throw new Error('Something went wrong');
