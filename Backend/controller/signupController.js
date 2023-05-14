@@ -1,4 +1,5 @@
 const User = require('../models/User')
+const bcrypt = require('bcryptjs')
 
 async function signupController(req, res) {
   const { email, password } = req.body
@@ -14,7 +15,9 @@ async function signupController(req, res) {
       return res.status(400).json({ message: 'L\'utilisateur existe déjà' })
     }
 
-    const newUser = new User({ email, password })
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+    const newUser = new User({ email, password: hashedPassword })
     const savedUser = await newUser.save()
 
     if (!savedUser) {

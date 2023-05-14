@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const jwtSecret = process.env.JWT_SECRET
+const bcrypt = require('bcryptjs')
 
 async function loginController(req, res) {
   const { email, password } = req.body
@@ -11,7 +12,7 @@ async function loginController(req, res) {
       return res.status(401).json({ message: 'Email ou mot de passe invalide' })
     }
 
-    const isMatch = await user.comparePassword(password)
+    const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
       return res.status(401).json({ message: 'Email ou mot de passe invalide' })
     }
